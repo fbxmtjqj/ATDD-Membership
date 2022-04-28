@@ -1,10 +1,10 @@
 package com.mang.atdd.membership.app.membership.controller;
 
 import com.mang.atdd.membership.aop.ExecutionTimeChecker;
-import com.mang.atdd.membership.app.enums.MembershipType;
 import com.mang.atdd.membership.app.membership.dto.MembershipAddResponse;
 import com.mang.atdd.membership.app.membership.dto.MembershipDetailResponse;
 import com.mang.atdd.membership.app.membership.dto.MembershipRequest;
+import com.mang.atdd.membership.app.membership.service.MembershipReadService;
 import com.mang.atdd.membership.app.membership.service.MembershipService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +24,7 @@ import static com.mang.atdd.membership.app.membership.validation.ValidationGroup
 public class MembershipController {
 
     private final MembershipService membershipService;
+    private final MembershipReadService membershipReadService;
 
     @PostMapping("/api/v1/memberships")
     public ResponseEntity<MembershipAddResponse> addMembership(
@@ -40,7 +41,7 @@ public class MembershipController {
     public ResponseEntity<List<MembershipDetailResponse>> getMembershipList(
             @RequestHeader(USER_ID_HEADER) final String userId) {
 
-        return ResponseEntity.ok(membershipService.getMembershipList(userId));
+        return ResponseEntity.ok(membershipReadService.getMembershipList(userId));
     }
 
     @GetMapping("/api/v1/memberships/{id}")
@@ -48,7 +49,7 @@ public class MembershipController {
             @RequestHeader(USER_ID_HEADER) final String userId,
             @PathVariable final Long id) {
 
-        return ResponseEntity.ok(membershipService.getMembership(id, userId));
+        return ResponseEntity.ok(membershipReadService.getMembership(id, userId));
     }
 
     @DeleteMapping("/api/v1/memberships/{id}")

@@ -4,12 +4,13 @@ package com.mang.atdd.membership.app.membership.controller;
 import com.google.gson.Gson;
 import com.mang.atdd.membership.app.common.GlobalExceptionHandler;
 import com.mang.atdd.membership.app.enums.MembershipType;
+import com.mang.atdd.membership.app.membership.dto.MembershipAddResponse;
 import com.mang.atdd.membership.app.membership.dto.MembershipDetailResponse;
+import com.mang.atdd.membership.app.membership.dto.MembershipRequest;
+import com.mang.atdd.membership.app.membership.service.MembershipReadService;
+import com.mang.atdd.membership.app.membership.service.MembershipService;
 import com.mang.atdd.membership.exception.MembershipErrorResult;
 import com.mang.atdd.membership.exception.MembershipException;
-import com.mang.atdd.membership.app.membership.dto.MembershipRequest;
-import com.mang.atdd.membership.app.membership.dto.MembershipAddResponse;
-import com.mang.atdd.membership.app.membership.service.MembershipService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +28,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 import static com.mang.atdd.membership.app.membership.constants.MembershipConstants.USER_ID_HEADER;
@@ -44,6 +44,8 @@ public class MembershipControllerTest {
 
     @Mock
     private MembershipService membershipService;
+    @Mock
+    private MembershipReadService membershipReadService;
 
     private MockMvc mockMvc;
     private Gson gson;
@@ -154,7 +156,7 @@ public class MembershipControllerTest {
         // given
         final String url = "/api/v1/memberships/-1";
         doThrow(new MembershipException(MembershipErrorResult.MEMBERSHIP_NOT_FOUND))
-                .when(membershipService)
+                .when(membershipReadService)
                 .getMembership(-1L, "12345");
 
         // when
@@ -174,7 +176,7 @@ public class MembershipControllerTest {
 
         doReturn(
                 MembershipDetailResponse.builder().build()
-        ).when(membershipService).getMembership(-1L, "12345");
+        ).when(membershipReadService).getMembership(-1L, "12345");
 
         // when
         final ResultActions resultActions = mockMvc.perform(
@@ -208,7 +210,7 @@ public class MembershipControllerTest {
                 MembershipDetailResponse.builder().build(),
                 MembershipDetailResponse.builder().build(),
                 MembershipDetailResponse.builder().build()
-        )).when(membershipService).getMembershipList("12345");
+        )).when(membershipReadService).getMembershipList("12345");
 
         // when
         final ResultActions resultActions = mockMvc.perform(
