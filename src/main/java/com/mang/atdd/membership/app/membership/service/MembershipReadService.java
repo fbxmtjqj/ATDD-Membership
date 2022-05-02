@@ -36,7 +36,7 @@ public class MembershipReadService {
     public MembershipDetailResponse getMembership(final Long membershipId, final String userId) {
         final Optional<Membership> optionalMembership = membershipRepository.findById(membershipId);
         final Membership membership = optionalMembership.orElseThrow(() -> new MembershipException(MembershipErrorResult.MEMBERSHIP_NOT_FOUND));
-        if (!membership.getUserId().equals(userId)) {
+        if (!booleanEqualUserId(membership, userId)) {
             throw new MembershipException(MembershipErrorResult.NOT_MEMBERSHIP_OWNER);
         }
 
@@ -48,4 +48,7 @@ public class MembershipReadService {
                 .build();
     }
 
+    private boolean booleanEqualUserId(Membership membership, String userId) {
+        return membership.getUserId().equals(userId);
+    }
 }
