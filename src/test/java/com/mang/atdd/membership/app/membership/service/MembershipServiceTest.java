@@ -4,6 +4,7 @@ import com.mang.atdd.membership.app.enums.MembershipType;
 import com.mang.atdd.membership.app.membership.dto.MembershipAddResponse;
 import com.mang.atdd.membership.app.membership.entity.Membership;
 import com.mang.atdd.membership.app.membership.repository.MembershipRepository;
+import com.mang.atdd.membership.app.point.service.RatePointService;
 import com.mang.atdd.membership.exception.MembershipErrorResult;
 import com.mang.atdd.membership.exception.MembershipException;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,8 @@ public class MembershipServiceTest {
     private MembershipService target;
     @Mock
     private MembershipRepository membershipRepository;
+    @Mock
+    private RatePointService ratePointService;
 
     private final String userId = "userId";
     private final MembershipType membershipType = MembershipType.NAVER;
