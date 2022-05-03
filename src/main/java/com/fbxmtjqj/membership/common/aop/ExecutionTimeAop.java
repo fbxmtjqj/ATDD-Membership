@@ -13,7 +13,7 @@ import org.springframework.util.StopWatch;
 @Component
 public class ExecutionTimeAop {
 
-    @Pointcut("within(com.fbxmtjqj.membership.membership..*)")
+    @Pointcut("execution(* com.fbxmtjqj.membership..*Controller.*(..))")
     public void ExecutionTimeChecker(){ }
 
     @Around("ExecutionTimeChecker()")
