@@ -18,7 +18,7 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.fbxmtjqj.tdd.membership.app.membership.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.fbxmtjqj.membership.membership.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
