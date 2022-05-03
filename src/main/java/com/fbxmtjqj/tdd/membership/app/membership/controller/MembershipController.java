@@ -1,6 +1,5 @@
 package com.fbxmtjqj.tdd.membership.app.membership.controller;
 
-import com.fbxmtjqj.tdd.membership.aop.ExecutionTimeChecker;
 import com.fbxmtjqj.tdd.membership.app.membership.dto.MembershipAddResponse;
 import com.fbxmtjqj.tdd.membership.app.membership.dto.MembershipDetailResponse;
 import com.fbxmtjqj.tdd.membership.app.membership.dto.MembershipRequest;
@@ -20,7 +19,6 @@ import static com.fbxmtjqj.tdd.membership.app.membership.validation.ValidationGr
 
 @RestController
 @RequiredArgsConstructor
-@ExecutionTimeChecker
 public class MembershipController {
 
     private final MembershipService membershipService;

@@ -1,19 +1,22 @@
 package com.fbxmtjqj.tdd.membership.aop;
 
+import lombok.extern.log4j.Log4j2;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StopWatch;
 
+@Log4j2
 @Aspect
 @Component
 public class ExecutionTimeAop {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Around("@annotation(com.fbxmtjqj.tdd.membership.aop.ExecutionTimeChecker)")
+    @Pointcut("within(com.fbxmtjqj.tdd.membership.app.membership.controller..*)")
+    public void ExecutionTimeChecker(){ }
+
+    @Around("ExecutionTimeChecker()")
     public Object calculateExecutionTime(final ProceedingJoinPoint pjp) throws Throwable {
         // 해당 클래스 처리 전의 시간
         final StopWatch sw = new StopWatch();
@@ -30,7 +33,7 @@ public class ExecutionTimeAop {
         final String methodName = pjp.getSignature().getName();
         final String task = className + "." + methodName;
 
-        logger.warn("[ExecutionTime] " + task + "-->" + executionTime + "(ms)");
+        log.info("[ExecutionTime] " + task + "-->" + executionTime + "(ms)");
 
         return result;
     }
