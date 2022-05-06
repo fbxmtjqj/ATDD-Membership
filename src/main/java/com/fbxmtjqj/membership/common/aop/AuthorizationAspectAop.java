@@ -9,7 +9,6 @@ import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.WeakKeyException;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
@@ -31,6 +30,8 @@ public class AuthorizationAspectAop {
 
     @Value(value = "${jwt.at.secret}")
     private String AT_SECRET;
+    @Value(value = "${jwt.secret}")
+    private String SECRET_KEY;
 
     @Pointcut("execution(* com.fbxmtjqj.membership..*Controller.*(..))")
     public void AuthorizationAspectChecker(){ }
@@ -39,8 +40,8 @@ public class AuthorizationAspectAop {
     public void TokenChecker(){ }
 
     @Before("AuthorizationAspectChecker() && !TokenChecker()")
-    public void insertAdminLog(JoinPoint joinPoint) throws WeakKeyException {
-        SecretKey key = Keys.hmacShaKeyFor(AT_SECRET.getBytes(StandardCharsets.UTF_8));
+    public void insertAdminLog() throws WeakKeyException {
+        SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String authorization = request.getHeader("Authorization");

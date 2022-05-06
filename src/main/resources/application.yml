@@ -34,3 +34,4 @@ springdoc:
 jwt:
   at:
     secret:
+  secret:

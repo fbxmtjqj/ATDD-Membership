@@ -4,6 +4,7 @@ import com.fbxmtjqj.membership.common.exception.ErrorCode;
 import com.fbxmtjqj.membership.common.exception.ServerException;
 import com.fbxmtjqj.membership.token.model.dto.TokenResponse;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,9 @@ public class TokenService {
     @Value(value = "${jwt.at.secret}")
     private String AT_SECRET;
 
+    @Value(value = "${jwt.secret}")
+    private String SECRET_KEY;
+
     public TokenResponse createToken(String apiKey){
         if(StringUtils.isBlank(apiKey)) {
             throw new ServerException(ErrorCode.NOT_FOUND_TOKEN);
@@ -32,10 +36,10 @@ public class TokenService {
         final Instant now = Instant.now();
         final Instant expired = now.plusSeconds(1800);
 
-        SecretKey key = Keys.hmacShaKeyFor(AT_SECRET.getBytes(StandardCharsets.UTF_8));
+        SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
         Map<String, Object> header = new HashMap<>();
-        header.put("type", "jwt");
+        header.put("typ", "jwt");
         header.put("alg", "HS256");
 
         String jwt = Jwts.builder()
@@ -43,7 +47,7 @@ public class TokenService {
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expired))
                 .claim("at_secret", AT_SECRET)
-                .signWith(key)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         return TokenResponse.builder()
