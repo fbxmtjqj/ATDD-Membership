@@ -13,6 +13,7 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -28,8 +29,8 @@ import java.util.regex.Pattern;
 @Component
 public class AuthorizationAspectAop {
 
-    private final String API_KEY = "lf2McyT3V5gDu2pNNm4VxmX3C2mezX3s";
-    private final String SECRET_KEY = "GYghbwpVZ4tZtbHu4Bdh8EBhAQj8EKax";
+    @Value(value = "${jwt.at.secret}")
+    private String AT_SECRET;
 
     @Pointcut("execution(* com.fbxmtjqj.membership..*Controller.*(..))")
     public void AuthorizationAspectChecker(){ }
@@ -39,7 +40,7 @@ public class AuthorizationAspectAop {
 
     @Before("AuthorizationAspectChecker() && !TokenChecker()")
     public void insertAdminLog(JoinPoint joinPoint) throws WeakKeyException {
-        SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        SecretKey key = Keys.hmacShaKeyFor(AT_SECRET.getBytes(StandardCharsets.UTF_8));
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         String authorization = request.getHeader("Authorization");
@@ -55,7 +56,7 @@ public class AuthorizationAspectAop {
 
             if(jwsClaims.getBody() != null) {
                 Claims claims = jwsClaims.getBody();
-                if(!claims.containsKey("apiKey") || !API_KEY.equals(claims.get("apiKey").toString())
+                if(!claims.containsKey("at_secret") || !AT_SECRET.equals(claims.get("at_secret").toString())
                         || claims.getExpiration() == null) {
                     throw new ServerException(ErrorCode.NOT_EQUAL_TOKEN);
                 }

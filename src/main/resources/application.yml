@@ -31,3 +31,6 @@ springdoc:
   paths-to-match:
     - /api/v1/**
     - /token
+jwt:
+  at:
+    secret:

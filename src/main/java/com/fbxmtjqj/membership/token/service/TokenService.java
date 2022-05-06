@@ -6,6 +6,7 @@ import com.fbxmtjqj.membership.token.model.dto.TokenResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -18,20 +19,20 @@ import java.util.Map;
 @Service
 public class TokenService {
 
-    private final String API_KEY = "lf2McyT3V5gDu2pNNm4VxmX3C2mezX3s";
-    private final String SECRET_KEY = "GYghbwpVZ4tZtbHu4Bdh8EBhAQj8EKax";
+    @Value(value = "${jwt.at.secret}")
+    private String AT_SECRET;
 
     public TokenResponse createToken(String apiKey){
         if(StringUtils.isBlank(apiKey)) {
             throw new ServerException(ErrorCode.NOT_FOUND_TOKEN);
-        } else if(!API_KEY.equals(apiKey)) {
+        } else if(!AT_SECRET.equals(apiKey)) {
             throw new ServerException(ErrorCode.NOT_EQUAL_TOKEN);
         }
 
         final Instant now = Instant.now();
         final Instant expired = now.plusSeconds(1800);
 
-        SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
+        SecretKey key = Keys.hmacShaKeyFor(AT_SECRET.getBytes(StandardCharsets.UTF_8));
 
         Map<String, Object> header = new HashMap<>();
         header.put("type", "jwt");
@@ -41,7 +42,7 @@ public class TokenService {
                 .setHeader(header)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(expired))
-                .claim("apiKey", API_KEY)
+                .claim("at_secret", AT_SECRET)
                 .signWith(key)
                 .compact();
 
