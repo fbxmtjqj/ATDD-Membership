@@ -40,7 +40,7 @@ public class AuthorizationAspectAop {
     public void TokenChecker(){ }
 
     @Before("AuthorizationAspectChecker() && !TokenChecker()")
-    public void insertAdminLog() throws WeakKeyException {
+    public void authorizationAspect() throws WeakKeyException {
         SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
